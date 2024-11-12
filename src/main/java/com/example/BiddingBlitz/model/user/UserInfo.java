@@ -1,9 +1,7 @@
 package com.example.BiddingBlitz.model.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Set;
 
 @Entity
@@ -11,14 +9,14 @@ import java.util.Set;
 public class UserInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     private String firstName;
     private String lastName;
 
-    // One-to-many relationship with UserAddress (one user can have multiple addresses)
-    @OneToMany(mappedBy = "userInfo")
-    private Set<UserAddress> addresses;  // A set of UserAddress entities for each user
+    @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
+    private UserAddress address;  // One-to-one with UserAddress
 
     // Getters and setters
     public Long getUserId() {
@@ -45,11 +43,11 @@ public class UserInfo {
         this.lastName = lastName;
     }
 
-    public Set<UserAddress> getAddresses() {
-        return addresses;
+    public UserAddress getAddress() {
+        return address;
     }
 
-    public void setAddresses(Set<UserAddress> addresses) {
-        this.addresses = addresses;
+    public void setAddress(UserAddress address) {
+        this.address = address;
     }
 }
