@@ -1,15 +1,15 @@
 package com.example.BiddingBlitz.model.auction;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "item")
 public class Item {
 
     @Id
-    private Long itemId;  // item_id is the primary key
+    private Integer itemId;  // item_id is the primary key
 
     private String name;
     private String auctionType;  // The type of auction (e.g., "Forward", "Dutch")
@@ -18,11 +18,11 @@ public class Item {
     private Double expeditedShipping;  // Expedited shipping cost
 
     // Getters and setters
-    public Long getItemId() {
+    public Integer getItemId() {
         return itemId;
     }
 
-    public void setItemId(Long itemId) {
+    public void setItemId(Integer itemId) {
         this.itemId = itemId;
     }
 

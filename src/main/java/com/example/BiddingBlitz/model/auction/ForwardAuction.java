@@ -2,13 +2,13 @@ package com.example.BiddingBlitz.model.auction;
 
 import com.example.BiddingBlitz.model.user.UserInfo;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "forward_auction")
@@ -16,7 +16,7 @@ public class ForwardAuction {
 
     @Id
     private Long itemId;  // item_id is the primary key and foreign key from the item table
-
+    private Long winnerId; // ID of the winner (can be mapped to UserInfo)
     private Double remainingTime;  // Remaining time in the auction
 
     // Many-to-one relationship with Item (each Forward auction is linked to one item)
@@ -52,6 +52,14 @@ public class ForwardAuction {
 
     public void setItem(Item item) {
         this.item = item;
+    }
+
+    public Long getWinnerId() {
+        return winnerId;
+    }
+
+    public void setWinnerId(Long winnerId) {
+        this.winnerId = winnerId;
     }
 
     public UserInfo getWinner() {
