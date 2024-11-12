@@ -1,6 +1,7 @@
 package com.example.BiddingBlitz.config;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -20,20 +21,9 @@ import java.util.Map;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = {
-        "com.example.BiddingBlitz.repository.user",
-        "com.example.BiddingBlitz.repository.authentication",
-        "com.example.BiddingBlitz.repository.payment",
-        "com.example.BiddingBlitz.repository.auction"
-})
-@EntityScan(basePackages = {
-        "com.example.BiddingBlitz.model.user",
-        "com.example.BiddingBlitz.model.authentication",
-        "com.example.BiddingBlitz.model.payment",
-        "com.example.BiddingBlitz.model.auction"
-})
 public class DatabaseConfig {
 
+    // Database URLs
     @Value("${spring.user.url}")
     private String userDbUrl;
 
@@ -47,6 +37,13 @@ public class DatabaseConfig {
     private String paymentDbUrl;
 
     // DataSource Beans
+    private DataSource createDataSource(String url) {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.sqlite.JDBC");
+        dataSource.setUrl(url);
+        return dataSource;
+    }
+
     @Bean
     public DataSource userDataSource() {
         return createDataSource(userDbUrl);
@@ -67,60 +64,10 @@ public class DatabaseConfig {
         return createDataSource(paymentDbUrl);
     }
 
-    private DataSource createDataSource(String url) {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.sqlite.JDBC");
-        dataSource.setUrl(url);
-        return dataSource;
-    }
+    // EntityManagerFactory and TransactionManager Configurations
+    private LocalContainerEntityManagerFactoryBean createEntityManagerFactory(
+            DataSource dataSource, String packagesToScan, String persistenceUnitName) {
 
-    // EntityManagerFactory Beans
-    @Primary
-    @Bean(name = "userEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean userEntityManagerFactory() {
-        return createEntityManagerFactory(
-                userDataSource(),
-                "com.example.BiddingBlitz.model.user",
-                "userPersistenceUnit"
-        );
-    }
-
-    @Bean(name = "authenticationEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean authenticationEntityManagerFactory() {
-        return createEntityManagerFactory(
-                authenticationDataSource(),
-                "com.example.BiddingBlitz.model.authentication, com.example.BiddingBlitz.model.user",
-                "authenticationPersistenceUnit"
-        );
-    }
-
-    @Bean(name = "auctionEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean auctionEntityManagerFactory() {
-        return createEntityManagerFactory(
-                auctionDataSource(),
-                "com.example.BiddingBlitz.model.auction, com.example.BiddingBlitz.model.user",
-                "auctionPersistenceUnit"
-        );
-    }
-
-    @Bean(name = "paymentEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean paymentEntityManagerFactory() {
-        return createEntityManagerFactory(paymentDataSource(),
-                "com.example.BiddingBlitz.model.payment, com.example.BiddingBlitz.model.auction",
-                "paymentPersistenceUnit"
-        );
-    }
-
-    // Default EntityManagerFactory
-    @Bean(name = "entityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        return createEntityManagerFactory(userDataSource(),
-                "com.example.BiddingBlitz.model",
-                "defaultPersistenceUnit"
-        );
-    }
-
-    private LocalContainerEntityManagerFactoryBean createEntityManagerFactory(DataSource dataSource, String packageToScan, String persistenceUnitName) {
         Map<String, String> properties = new HashMap<>();
         properties.put("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect");
         properties.put("hibernate.hbm2ddl.auto", "update");
@@ -128,32 +75,94 @@ public class DatabaseConfig {
 
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(dataSource);
-        factoryBean.setPackagesToScan(packageToScan);
+        factoryBean.setPackagesToScan(packagesToScan);
         factoryBean.setPersistenceUnitName(persistenceUnitName);
         factoryBean.setJpaPropertyMap(properties);
         factoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
         return factoryBean;
     }
 
-    // Transaction Manager Beans
+    @Primary
+    @Bean(name = "userEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean userEntityManagerFactory() {
+        return createEntityManagerFactory(
+                userDataSource(), "com.example.BiddingBlitz.model.user", "userPersistenceUnit");
+    }
+
+    @Bean(name = "authenticationEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean authenticationEntityManagerFactory() {
+        return createEntityManagerFactory(
+                authenticationDataSource(), "com.example.BiddingBlitz.model.authentication", "authenticationPersistenceUnit");
+    }
+
+    @Bean(name = "auctionEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean auctionEntityManagerFactory() {
+        return createEntityManagerFactory(
+                auctionDataSource(), "com.example.BiddingBlitz.model.auction", "auctionPersistenceUnit");
+    }
+
+    @Bean(name = "paymentEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean paymentEntityManagerFactory() {
+        return createEntityManagerFactory(
+                paymentDataSource(), "com.example.BiddingBlitz.model.payment", "paymentPersistenceUnit");
+    }
+
+    // Transaction Managers
     @Primary
     @Bean(name = "userTransactionManager")
-    public JpaTransactionManager userTransactionManager(EntityManagerFactory userEntityManagerFactory) {
+    public JpaTransactionManager userTransactionManager(
+            @Qualifier("userEntityManagerFactory") EntityManagerFactory userEntityManagerFactory) {
         return new JpaTransactionManager(userEntityManagerFactory);
     }
 
     @Bean(name = "authenticationTransactionManager")
-    public JpaTransactionManager authenticationTransactionManager(EntityManagerFactory authenticationEntityManagerFactory) {
+    public JpaTransactionManager authenticationTransactionManager(
+            @Qualifier("authenticationEntityManagerFactory") EntityManagerFactory authenticationEntityManagerFactory) {
         return new JpaTransactionManager(authenticationEntityManagerFactory);
     }
 
     @Bean(name = "auctionTransactionManager")
-    public JpaTransactionManager auctionTransactionManager(EntityManagerFactory auctionEntityManagerFactory) {
+    public JpaTransactionManager auctionTransactionManager(
+            @Qualifier("auctionEntityManagerFactory") EntityManagerFactory auctionEntityManagerFactory) {
         return new JpaTransactionManager(auctionEntityManagerFactory);
     }
 
     @Bean(name = "paymentTransactionManager")
-    public JpaTransactionManager paymentTransactionManager(EntityManagerFactory paymentEntityManagerFactory) {
+    public JpaTransactionManager paymentTransactionManager(
+            @Qualifier("paymentEntityManagerFactory") EntityManagerFactory paymentEntityManagerFactory) {
         return new JpaTransactionManager(paymentEntityManagerFactory);
     }
 }
+
+// Separate repository configurations for each database to bind them to specific EntityManagerFactory and TransactionManager
+@Configuration
+@EnableJpaRepositories(
+        basePackages = "com.example.BiddingBlitz.repository.user",
+        entityManagerFactoryRef = "userEntityManagerFactory",
+        transactionManagerRef = "userTransactionManager"
+)
+class UserDbConfig {}
+
+@Configuration
+@EnableJpaRepositories(
+        basePackages = "com.example.BiddingBlitz.repository.authentication",
+        entityManagerFactoryRef = "authenticationEntityManagerFactory",
+        transactionManagerRef = "authenticationTransactionManager"
+)
+class AuthenticationDbConfig {}
+
+@Configuration
+@EnableJpaRepositories(
+        basePackages = "com.example.BiddingBlitz.repository.auction",
+        entityManagerFactoryRef = "auctionEntityManagerFactory",
+        transactionManagerRef = "auctionTransactionManager"
+)
+class AuctionDbConfig {}
+
+@Configuration
+@EnableJpaRepositories(
+        basePackages = "com.example.BiddingBlitz.repository.payment",
+        entityManagerFactoryRef = "paymentEntityManagerFactory",
+        transactionManagerRef = "paymentTransactionManager"
+)
+class PaymentDbConfig {}

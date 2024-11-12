@@ -1,13 +1,7 @@
 package com.example.BiddingBlitz.model.auction;
 
-import com.example.BiddingBlitz.model.user.UserInfo;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,22 +9,12 @@ import jakarta.persistence.Table;
 public class DutchAuction {
 
     @Id
-    private Long itemId;  // item_id is the primary key and foreign key from the item table
+    private Long itemId;  // Primary key for DutchAuction
 
     private Double startingPrice;  // Starting price for the Dutch auction
-    private Double currentPrice;   // Current price in the auction (this price will decrease over time)
+    private Double currentPrice;   // Current price in the auction (decreases over time)
     private Double remainingTime;  // Remaining time for the auction
-    private Long winnerId;         // ID of the winner (can be mapped to UserInfo)
-
-    // Many-to-one relationship with Item (each Dutch auction is linked to one item)
-    @ManyToOne
-    @JoinColumn(name = "item_id", insertable = false, updatable = false)
-    private Item item;
-
-    // Many-to-one relationship with UserInfo (each Dutch auction has a winner from the UserInfo table)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "winner_id", foreignKey = @ForeignKey(name = "FK_dutch_auction_user_info"))
-    private UserInfo winner;  // The winner of the auction
+    private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
 
     // Getters and setters
     public Long getItemId() {
@@ -71,21 +55,5 @@ public class DutchAuction {
 
     public void setWinnerId(Long winnerId) {
         this.winnerId = winnerId;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-    public UserInfo getWinner() {
-        return winner;
-    }
-
-    public void setWinner(UserInfo winner) {
-        this.winner = winner;
     }
 }
