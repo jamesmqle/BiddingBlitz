@@ -1,18 +1,22 @@
 package com.example.BiddingBlitz.model.auction;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "forward_auction")
 public class ForwardAuction {
 
     @Id
-    private Long itemId;  // Primary key for ForwardAuction
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long itemId;  // Primary key for ForwardAuction, also a foreign key
 
     private Long winnerId;        // ID of the winner (not a foreign key, avoids cross-database constraints)
     private Double remainingTime;  // Remaining time in the auction
+
+    // One-to-one relationship with Item (itemId is used as the foreign key)
+    @OneToOne
+    @JoinColumn(name = "itemId", referencedColumnName = "itemId", insertable = false, updatable = false)
+    private Item item;
 
     // Getters and setters
     public Long getItemId() {
@@ -37,5 +41,13 @@ public class ForwardAuction {
 
     public void setWinnerId(Long winnerId) {
         this.winnerId = winnerId;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }
