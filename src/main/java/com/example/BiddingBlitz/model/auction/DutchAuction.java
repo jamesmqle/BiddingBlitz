@@ -10,10 +10,8 @@ public class DutchAuction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;  // Primary key for DutchAuction, also a foreign key
 
-    private Double startingPrice;  // Starting price for the Dutch auction
-    private Double currentPrice;   // Current price in the auction (decreases over time)
-    private Double remainingTime;  // Remaining time for the auction
-    private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
+    private Double decrementPrice;   // amount the price decreases over time
+    private Double time;  // Remaining time for the auction
 
     // One-to-one relationship with Item (itemId is used as the foreign key)
     @OneToOne
@@ -29,36 +27,20 @@ public class DutchAuction {
         this.itemId = itemId;
     }
 
-    public Double getStartingPrice() {
-        return startingPrice;
+    public Double getDecrementPrice() {
+        return decrementPrice;
     }
 
-    public void setStartingPrice(Double startingPrice) {
-        this.startingPrice = startingPrice;
-    }
-
-    public Double getCurrentPrice() {
-        return currentPrice;
-    }
-
-    public void setCurrentPrice(Double currentPrice) {
-        this.currentPrice = currentPrice;
+    public void setDecrementPrice(Double decrementPrice) {
+        this.decrementPrice = decrementPrice;
     }
 
     public Double getRemainingTime() {
-        return remainingTime;
+        return time;
     }
 
-    public void setRemainingTime(Double remainingTime) {
-        this.remainingTime = remainingTime;
-    }
-
-    public Long getWinnerId() {
-        return winnerId;
-    }
-
-    public void setWinnerId(Long winnerId) {
-        this.winnerId = winnerId;
+    public void setTime(Double time) {
+        this.time = time;
     }
 
     public Item getItem() {
