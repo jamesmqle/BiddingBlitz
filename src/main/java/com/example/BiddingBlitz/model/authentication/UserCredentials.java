@@ -9,9 +9,7 @@ import jakarta.persistence.Table;
 public class UserCredentials {
 
     @Id
-    private Long userId;  // Primary key for UserCredentials
-
-    private Long userInfoId;  // User ID associated with UserInfo, but without a foreign key constraint
+    private Long userId;  // Primary key for UserCredentials. Also User ID associated with UserInfo, but without a foreign key constraint
 
     private String username;
     private String password;
@@ -23,14 +21,6 @@ public class UserCredentials {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getUserInfoId() {
-        return userInfoId;
-    }
-
-    public void setUserInfoId(Long userInfoId) {
-        this.userInfoId = userInfoId;
     }
 
     public String getUsername() {

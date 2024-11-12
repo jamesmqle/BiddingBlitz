@@ -1,20 +1,24 @@
 package com.example.BiddingBlitz.model.auction;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "dutch_auction")
 public class DutchAuction {
 
     @Id
-    private Long itemId;  // Primary key for DutchAuction
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long itemId;  // Primary key for DutchAuction, also a foreign key
 
     private Double startingPrice;  // Starting price for the Dutch auction
     private Double currentPrice;   // Current price in the auction (decreases over time)
     private Double remainingTime;  // Remaining time for the auction
     private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
+
+    // One-to-one relationship with Item (itemId is used as the foreign key)
+    @OneToOne
+    @JoinColumn(name = "itemId", referencedColumnName = "itemId", insertable = false, updatable = false)
+    private Item item;
 
     // Getters and setters
     public Long getItemId() {
@@ -55,5 +59,13 @@ public class DutchAuction {
 
     public void setWinnerId(Long winnerId) {
         this.winnerId = winnerId;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }

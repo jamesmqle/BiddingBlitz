@@ -1,14 +1,13 @@
 package com.example.BiddingBlitz.model.auction;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "item")
 public class Item {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer itemId;  // item_id is the primary key
 
     private String name;
