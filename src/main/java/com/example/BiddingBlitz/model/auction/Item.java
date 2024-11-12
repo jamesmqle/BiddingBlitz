@@ -15,6 +15,7 @@ public class Item {
     private Double itemPrice;    // Price of the item
     private Double shippingPrice;  // Shipping price for the item
     private Double expeditedShipping;  // Expedited shipping cost
+    private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
 
     // Getters and setters
     public Integer getItemId() {
@@ -63,5 +64,13 @@ public class Item {
 
     public void setExpeditedShipping(Double expeditedShipping) {
         this.expeditedShipping = expeditedShipping;
+    }
+
+    public Long getWinnerId() {
+        return this.winnerId;
+    }
+
+    public void setWinnerId(Long winnerId) {
+        this.winnerId = winnerId;
     }
 }

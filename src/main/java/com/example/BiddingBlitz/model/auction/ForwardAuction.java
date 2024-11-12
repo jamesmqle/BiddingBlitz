@@ -10,7 +10,6 @@ public class ForwardAuction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long itemId;  // Primary key for ForwardAuction, also a foreign key
 
-    private Long winnerId;        // ID of the winner (not a foreign key, avoids cross-database constraints)
     private Double remainingTime;  // Remaining time in the auction
 
     // One-to-one relationship with Item (itemId is used as the foreign key)
@@ -33,14 +32,6 @@ public class ForwardAuction {
 
     public void setRemainingTime(Double remainingTime) {
         this.remainingTime = remainingTime;
-    }
-
-    public Long getWinnerId() {
-        return winnerId;
-    }
-
-    public void setWinnerId(Long winnerId) {
-        this.winnerId = winnerId;
     }
 
     public Item getItem() {
