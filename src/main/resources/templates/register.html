@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Register</title>
+</head>
+<body>
+<h2>Register User</h2>
+
+<form th:action="@{/register}" th:object="${userInfo}" method="post">
+  <fieldset>
+    <legend>User Info</legend>
+    <label>First Name: <input type="text" th:field="*{firstName}" /></label><br/>
+    <label>Last Name: <input type="text" th:field="*{lastName}" /></label><br/>
+  </fieldset>
+
+  <fieldset>
+    <legend>Address Info</legend>
+    <label>Street Number: <input type="text" th:field="*{userAddress.streetNumber}" /></label><br/>
+    <label>Street Address: <input type="text" th:field="*{userAddress.streetAddress}" /></label><br/>
+    <label>Postal Code: <input type="text" th:field="*{userAddress.postalCode}" /></label><br/>
+    <label>City: <input type="text" th:field="*{userAddress.city}" /></label><br/>
+    <label>Country: <input type="text" th:field="*{userAddress.country}" /></label><br/>
+  </fieldset>
+
+  <fieldset>
+    <legend>Credentials</legend>
+    <label>Username: <input type="text" th:field="*{userCredentials.username}" /></label><br/>
+    <label>Password: <input type="password" th:field="*{userCredentials.password}" /></label><br/>
+  </fieldset>
+
+  <button type="submit">Register</button>
+</form>
+
+<p th:text="${successMessage}"></p>
+</body>
+</html>
