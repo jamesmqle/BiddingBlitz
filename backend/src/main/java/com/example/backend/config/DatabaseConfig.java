@@ -3,6 +3,7 @@ package com.example.backend.config;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -23,16 +24,16 @@ import java.util.Map;
 public class DatabaseConfig {
 
     // Database URLs
-    @Value("${spring.user.url}")
+    @Value("${spring.user.url:jdbc:sqlite:backend/src/main/resources/db/user.db}")
     private String userDbUrl;
 
-    @Value("${spring.authentication.url}")
+    @Value("${spring.authentication.url:jdbc:sqlite:backend/src/main/resources/db/authentication.db}")
     private String authenticationDbUrl;
 
-    @Value("${spring.auction.url}")
+    @Value("${spring.auction.url:jdbc:sqlite:backend/src/main/resources/db/auction.db}")
     private String auctionDbUrl;
 
-    @Value("${spring.payment.url}")
+    @Value("${spring.payment.url:jdbc:sqlite:backend/src/main/resources/db/payment.db}")
     private String paymentDbUrl;
 
     // DataSource Beans
@@ -135,6 +136,7 @@ public class DatabaseConfig {
 
 // Separate repository configurations for each database to bind them to specific EntityManagerFactory and TransactionManager
 @Configuration
+@EntityScan(basePackages = "com.example.backend.model.user")
 @EnableJpaRepositories(
         basePackages = "com.example.backend.repository.user",
         entityManagerFactoryRef = "userEntityManagerFactory",
@@ -143,6 +145,7 @@ public class DatabaseConfig {
 class UserDbConfig {}
 
 @Configuration
+@EntityScan(basePackages = "com.example.backend.model.authentication")
 @EnableJpaRepositories(
         basePackages = "com.example.backend.repository.authentication",
         entityManagerFactoryRef = "authenticationEntityManagerFactory",
@@ -151,6 +154,7 @@ class UserDbConfig {}
 class AuthenticationDbConfig {}
 
 @Configuration
+@EntityScan(basePackages = "com.example.backend.model.auction")
 @EnableJpaRepositories(
         basePackages = "com.example.backend.repository.auction",
         entityManagerFactoryRef = "auctionEntityManagerFactory",
@@ -159,6 +163,7 @@ class AuthenticationDbConfig {}
 class AuctionDbConfig {}
 
 @Configuration
+@EntityScan(basePackages = "com.example.backend.model.payment")
 @EnableJpaRepositories(
         basePackages = "com.example.backend.repository.payment",
         entityManagerFactoryRef = "paymentEntityManagerFactory",
