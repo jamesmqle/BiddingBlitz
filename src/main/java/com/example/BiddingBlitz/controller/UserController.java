@@ -37,7 +37,29 @@ public class UserController {
             Model model) {
 
         userService.registerUser(userCredentials, userInfo, userAddress);
-        model.addAttribute("message", "Registration successful!");
-        return "registration_success";
+        return "redirect:/login";
+//        model.addAttribute("message", "Registration successful!");
+//        return "registration_success";
+    }
+
+    // Login GET Method
+    @GetMapping("/login")
+    public String showLoginForm(Model model) {
+        model.addAttribute("userCredentials", new UserCredentials());
+        return "login";
+    }
+
+    // Login POST Method
+    @PostMapping("/login")
+    public String loginUser(@ModelAttribute UserCredentials userCredentials, Model model) {
+
+        boolean isAuthenticated = userService.authenticateUser(userCredentials);  // Check if user credentials are valid
+
+        if (isAuthenticated) {
+            return "welcome";
+        } else {
+            model.addAttribute("errorMessage", "Invalid username or password");
+            return "login";
+        }
     }
 }

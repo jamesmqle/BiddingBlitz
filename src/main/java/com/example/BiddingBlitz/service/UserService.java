@@ -9,7 +9,6 @@ import com.example.BiddingBlitz.repository.user.UserInfoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +32,11 @@ public class UserService {
         userCredentialsRepository.save(userCredentials); // Save the credentials in the authentication database
         userAddress.setUserInfo(savedUserInfo); // This still links UserInfo to address in user_db
         userAddressRepository.save(userAddress); // Save the address in the user database
+    }
+
+    public boolean authenticateUser(UserCredentials userCredentials) {
+        UserCredentials existingUser = userCredentialsRepository.findByUsername(userCredentials.getUsername());
+        return existingUser.getPassword().equals(userCredentials.getPassword()); // If user is found and password matches
     }
 
 }
