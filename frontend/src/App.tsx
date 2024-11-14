@@ -6,7 +6,7 @@ import ProfilePage from "./components/pages/ProfilePage";
 import ReceiptPage from "./components/pages/ReceiptPage";
 import SignInPage from "./components/pages/SignInPage";
 import SignUpPage from "./components/pages/SignUpPage";
-import Catalogue from "./components/pages/Catalogue";
+import Catalogue from "./components/pages/CataloguePage";
 
 const App: React.FC = () => {
   return (
