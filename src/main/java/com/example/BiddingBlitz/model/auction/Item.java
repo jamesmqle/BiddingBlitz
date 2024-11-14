@@ -8,7 +8,7 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer itemId;  // item_id is the primary key
+    private Long itemId;  // item_id is the primary key
 
     private String name;
     private String auctionType;  // The type of auction (e.g., "Forward", "Dutch")
@@ -18,11 +18,11 @@ public class Item {
     private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
 
     // Getters and setters
-    public Integer getItemId() {
+    public Long getItemId() {
         return itemId;
     }
 
-    public void setItemId(Integer itemId) {
+    public void setItemId(Long itemId) {
         this.itemId = itemId;
     }
 
