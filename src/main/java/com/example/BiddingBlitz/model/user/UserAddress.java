@@ -1,18 +1,14 @@
 package com.example.BiddingBlitz.model.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_address")
 public class UserAddress {
 
     @Id
-    private Long userId;  // Primary key, also acts as foreign key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;  // Primary key for UserAddress
 
     private Integer streetNumber;
     private String streetAddress;
@@ -20,18 +16,16 @@ public class UserAddress {
     private String city;
     private String country;
 
-    // One-to-one relationship with UserInfo (userId is both the primary key and the foreign key)
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", referencedColumnName = "userId", insertable = false, updatable = false)
-    private UserInfo userInfo;  // The associated user info
+    @OneToOne
+    @JoinColumn(name = "userId", referencedColumnName = "userId", nullable = false)
+    private UserInfo userInfo;  // reference to UserInfo using userId
 
-    // Getters and setters
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Integer getStreetNumber() {

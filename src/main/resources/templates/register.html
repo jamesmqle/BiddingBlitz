@@ -1,36 +1,55 @@
+<!-- register.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <title>Register</title>
 </head>
 <body>
-<h2>Register User</h2>
+<h2>Register</h2>
+<form th:action="@{/register}" method="post">
+  <!-- UserInfo fields -->
+  <div>
+    <label>First Name:</label>
+    <input type="text" th:field="*{userInfo.firstName}" />
+  </div>
+  <div>
+    <label>Last Name:</label>
+    <input type="text" th:field="*{userInfo.lastName}" />
+  </div>
 
-<form th:action="@{/register}" th:object="${userInfo}" method="post">
-  <fieldset>
-    <legend>User Info</legend>
-    <label>First Name: <input type="text" th:field="*{firstName}" /></label><br/>
-    <label>Last Name: <input type="text" th:field="*{lastName}" /></label><br/>
-  </fieldset>
+  <!-- UserCredentials fields -->
+  <div>
+    <label>Username:</label>
+    <input type="text" th:field="*{userCredentials.username}" />
+  </div>
+  <div>
+    <label>Password:</label>
+    <input type="password" th:field="*{userCredentials.password}" />
+  </div>
 
-  <fieldset>
-    <legend>Address Info</legend>
-    <label>Street Number: <input type="text" th:field="*{userAddress.streetNumber}" /></label><br/>
-    <label>Street Address: <input type="text" th:field="*{userAddress.streetAddress}" /></label><br/>
-    <label>Postal Code: <input type="text" th:field="*{userAddress.postalCode}" /></label><br/>
-    <label>City: <input type="text" th:field="*{userAddress.city}" /></label><br/>
-    <label>Country: <input type="text" th:field="*{userAddress.country}" /></label><br/>
-  </fieldset>
-
-  <fieldset>
-    <legend>Credentials</legend>
-    <label>Username: <input type="text" th:field="*{userCredentials.username}" /></label><br/>
-    <label>Password: <input type="password" th:field="*{userCredentials.password}" /></label><br/>
-  </fieldset>
+  <!-- UserAddress fields -->
+  <div>
+    <label>Street Number:</label>
+    <input type="number" th:field="*{userAddress.streetNumber}" />
+  </div>
+  <div>
+    <label>Street Address:</label>
+    <input type="text" th:field="*{userAddress.streetAddress}" />
+  </div>
+  <div>
+    <label>Postal Code:</label>
+    <input type="text" th:field="*{userAddress.postalCode}" />
+  </div>
+  <div>
+    <label>City:</label>
+    <input type="text" th:field="*{userAddress.city}" />
+  </div>
+  <div>
+    <label>Country:</label>
+    <input type="text" th:field="*{userAddress.country}" />
+  </div>
 
   <button type="submit">Register</button>
 </form>
-
-<p th:text="${successMessage}"></p>
 </body>
 </html>

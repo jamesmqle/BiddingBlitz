@@ -1,5 +1,6 @@
 package com.example.BiddingBlitz.model.user;
 
+import com.example.BiddingBlitz.model.authentication.UserCredentials;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -15,7 +16,7 @@ public class UserInfo {
     private String firstName;
     private String lastName;
 
-    @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private UserAddress address;  // One-to-one with UserAddress
 
     // Getters and setters
