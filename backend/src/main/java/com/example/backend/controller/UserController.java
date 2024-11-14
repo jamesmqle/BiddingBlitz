@@ -1,15 +1,15 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.RegistrationRequest;
 import com.example.backend.model.authentication.UserCredentials;
 import com.example.backend.model.user.UserAddress;
 import com.example.backend.model.user.UserInfo;
 import com.example.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class UserController {
@@ -30,17 +30,22 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerUser(
-            @ModelAttribute UserInfo userInfo,
-            @ModelAttribute UserCredentials userCredentials,
-            @ModelAttribute UserAddress userAddress,
-            Model model) {
-
-        userService.registerUser(userCredentials, userInfo, userAddress);
-        return "redirect:/login";
-//        model.addAttribute("message", "Registration successful!");
-//        return "registration_success";
+    public ResponseEntity<String> registerUser(@RequestBody RegistrationRequest registrationDto) {
+        userService.registerUser(registrationDto.getUserCredentials(), registrationDto.getUserInfo(), registrationDto.getUserAddress());
+        return ResponseEntity.ok("Registration successful!");
     }
+
+
+//    @PostMapping("/register")
+//    public String registerUser(
+//            @ModelAttribute UserInfo userInfo,
+//            @ModelAttribute UserCredentials userCredentials,
+//            @ModelAttribute UserAddress userAddress,
+//            Model model) {
+//
+//        userService.registerUser(userCredentials, userInfo, userAddress);
+//        return "redirect:/login";
+//    }
 
     // Login GET Method
     @GetMapping("/login")
