@@ -43,7 +43,7 @@ public class AuctionService {
             @Override
             public void run() {
                 // End auction and notify users
-                endAuction(item);
+                endAuction(item.getItemId());
             }
         }, auctionDuration);
 
@@ -65,7 +65,7 @@ public class AuctionService {
                             " - New price: $" + item.getItemPrice());
                 } else {
                     timer.cancel();
-                    endAuction(item);
+                    endAuction(item.getItemId());
                 }
             }
         }, 0, decrementInterval);
@@ -100,12 +100,13 @@ public class AuctionService {
         }
     }
 
-    public Item endAuction(Item item) {
+    public Item endAuction(Long itemId) {
 
-        if (item != null) {
-            new IllegalArgumentException("Item not found");
+        if (itemId == null) {
+            throw new IllegalArgumentException("Item not found");
         }
 
+        Item item = itemRepository.getReferenceById(itemId);
         item.setWinnerId(getWinningUserId(item));  // Assume logic to get winning user
         itemRepository.save(item);
         return item;
