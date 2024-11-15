@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.RegistrationRequest;
+import com.example.backend.dto.RegistrationRequestDTO;
+import com.example.backend.dto.UserDetailsDTO;
 import com.example.backend.model.authentication.UserCredentials;
 import com.example.backend.model.user.UserAddress;
 import com.example.backend.model.user.UserInfo;
@@ -11,7 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequestMapping("/api/user")  // Base URL for all user-related endpoints
 public class UserController {
 
     private final UserService userService;
@@ -19,6 +21,11 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/{userId}")
+    public UserDetailsDTO getUserDetails(@PathVariable Long userId) {
+        return userService.getUserDetails(userId);
     }
 
     @GetMapping("/register")
@@ -30,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegistrationRequest registrationDto) {
+    public ResponseEntity<String> registerUser(@RequestBody RegistrationRequestDTO registrationDto) {
         userService.registerUser(registrationDto.getUserCredentials(), registrationDto.getUserInfo(), registrationDto.getUserAddress());
         return ResponseEntity.ok("Registration successful!");
     }

@@ -4,7 +4,7 @@ import com.example.backend.model.authentication.UserCredentials;
 import com.example.backend.model.user.UserAddress;
 import com.example.backend.model.user.UserInfo;
 
-public class RegistrationRequest {
+public class RegistrationRequestDTO {
     private UserCredentials userCredentials;
     private UserInfo userInfo;
     private UserAddress userAddress;

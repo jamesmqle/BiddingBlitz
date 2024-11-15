@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.model.authentication.UserCredentials;
+import com.example.backend.dto.UserDetailsDTO;
 import com.example.backend.model.user.UserAddress;
 import com.example.backend.model.user.UserInfo;
 import com.example.backend.repository.authentication.UserCredentialsRepository;
@@ -36,6 +37,16 @@ public class UserService {
     public boolean authenticateUser(UserCredentials userCredentials) {
         UserCredentials existingUser = userCredentialsRepository.findByUsername(userCredentials.getUsername());
         return existingUser.getPassword().equals(userCredentials.getPassword()); // If user is found and password matches
+    }
+
+    public UserDetailsDTO getUserDetails(Long userId) {
+        UserInfo userInfo = userInfoRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserAddress userAddress = userAddressRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User address not found"));
+
+        return new UserDetailsDTO(userInfo, userAddress);
     }
 
 }
