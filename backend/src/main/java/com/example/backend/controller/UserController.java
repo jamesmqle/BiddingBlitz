@@ -5,6 +5,7 @@ import com.example.backend.model.authentication.UserCredentials;
 import com.example.backend.model.user.UserAddress;
 import com.example.backend.model.user.UserInfo;
 import com.example.backend.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,9 +31,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegistrationRequest registrationDto) {
-        userService.registerUser(registrationDto.getUserCredentials(), registrationDto.getUserInfo(), registrationDto.getUserAddress());
-        return ResponseEntity.ok("Registration successful!");
+    public String registerUser(
+            @ModelAttribute UserInfo userInfo,
+            @ModelAttribute UserCredentials userCredentials,
+            @ModelAttribute UserAddress userAddress,
+            Model model) {
+
+        userService.registerUser(userCredentials, userInfo, userAddress);
+        return "redirect:/login";
     }
 
     // Login GET Method
@@ -42,40 +48,38 @@ public class UserController {
         return "login";
     }
 
+    // Login POST Method
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserCredentials userCredentials) {
+    public String loginUser(@ModelAttribute UserCredentials userCredentials, Model model) {
+
         boolean isAuthenticated = userService.authenticateUser(userCredentials);  // Check if user credentials are valid
 
         if (isAuthenticated) {
-            return ResponseEntity.ok("Login successful");
+            return "welcome";
         } else {
-            return ResponseEntity.status(401).body("Invalid username or password");
+            model.addAttribute("errorMessage", "Invalid username or password");
+            return "login";
         }
     }
 
+    // JSON STUFF BELOW
 
-//    // Login POST Method
-//    @PostMapping("/login")
-//    public String loginUser(@ModelAttribute UserCredentials userCredentials, Model model) {
+    //    @PostMapping("/register")
+//    public ResponseEntity<String> registerUser(@RequestBody RegistrationRequest registrationDto) {
+//        userService.registerUser(registrationDto.getUserCredentials(), registrationDto.getUserInfo(), registrationDto.getUserAddress());
+//        return ResponseEntity.ok("Registration successful!");
+//    }
 //
+//
+//    @PostMapping("/login")
+//    public ResponseEntity<String> loginUser(@RequestBody UserCredentials userCredentials, HttpServletRequest request) {
 //        boolean isAuthenticated = userService.authenticateUser(userCredentials);  // Check if user credentials are valid
 //
 //        if (isAuthenticated) {
-//            return "welcome";
+//            request.getSession().setAttribute("username", userCredentials.getUsername()); // store user details in session
+//            return ResponseEntity.ok("Login successful");
 //        } else {
-//            model.addAttribute("errorMessage", "Invalid username or password");
-//            return "login";
+//            return ResponseEntity.status(401).body("Invalid username or password");
 //        }
-//    }
-
-    //    @PostMapping("/register")
-//    public String registerUser(
-//            @ModelAttribute UserInfo userInfo,
-//            @ModelAttribute UserCredentials userCredentials,
-//            @ModelAttribute UserAddress userAddress,
-//            Model model) {
-//
-//        userService.registerUser(userCredentials, userInfo, userAddress);
-//        return "redirect:/login";
 //    }
 }

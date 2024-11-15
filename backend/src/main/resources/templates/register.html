@@ -51,42 +51,5 @@
 
   <button type="submit">Register</button>
 </form>
-
-<script>
-  async function submitForm() {
-      const formData = {
-          userInfo: {
-              firstName: document.getElementById("firstName").value,
-              lastName: document.getElementById("lastName").value,
-          },
-          userCredentials: {
-              username: document.getElementById("username").value,
-              password: document.getElementById("password").value,
-          },
-          userAddress: {
-              streetNumber: parseInt(document.getElementById("streetNumber").value),
-              streetAddress: document.getElementById("streetAddress").value,
-              postalCode: document.getElementById("postalCode").value,
-              city: document.getElementById("city").value,
-              country: document.getElementById("country").value
-          }
-      };
-
-      const response = await fetch("/register", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-          alert("Registration successful!");
-          window.location.href = "/login";
-      } else {
-          alert("Registration failed.");
-      }
-  }
-</script>
 </body>
 </html>
