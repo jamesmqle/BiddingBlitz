@@ -6,6 +6,8 @@ import com.example.backend.model.user.UserAddress;
 import com.example.backend.model.user.UserInfo;
 import com.example.backend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -50,17 +52,22 @@ public class UserController {
 
     // Login POST Method
     @PostMapping("/login")
-    public String loginUser(@ModelAttribute UserCredentials userCredentials, Model model) {
+    public String loginUser(@ModelAttribute UserCredentials userCredentials, HttpServletRequest request, Model model) {
 
         boolean isAuthenticated = userService.authenticateUser(userCredentials);  // Check if user credentials are valid
 
         if (isAuthenticated) {
-            return "welcome";
+        	HttpSession session = request.getSession();
+        	String sessionId = Long.toString(userService.findUser(userCredentials).getUserId());
+        	session.setAttribute("userId", sessionId);
+
+            return "redirect:/auction/welcome";
         } else {
             model.addAttribute("errorMessage", "Invalid username or password");
             return "login";
         }
     }
+    
 
     // JSON STUFF BELOW
 

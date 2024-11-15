@@ -115,4 +115,5 @@ public class AuctionService {
     private Long getWinningUserId(Item item) {
         return item.getItemId()!=null ? item.getItemId() : null;
     }
+    
 }
