@@ -43,7 +43,7 @@
                 } else {
                     items.forEach(item => {
                         const li = document.createElement('li');
-                        li.textContent = item.name; // Assuming each item has a "name" property
+                        li.textContent = `${item.name} (Auction Type: ${item.auctionType}) - Price: $${item.itemPrice}`;
                         resultsList.appendChild(li);
                     });
                 }

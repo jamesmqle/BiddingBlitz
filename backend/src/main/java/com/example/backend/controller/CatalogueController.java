@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import com.example.backend.service.*;
+import com.example.backend.model.auction.DutchAuction;
+import com.example.backend.model.auction.ForwardAuction;
 import com.example.backend.model.auction.Item;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -27,6 +29,16 @@ public class CatalogueController {
     @GetMapping("/catalog/search/results")
     @ResponseBody // Indicates JSON response
     public List<Item> getSearchResults(@RequestParam("keyword") String keyword) {
-        return catalogueService.searchAuctions(keyword);
+    	List<Item> items = catalogueService.searchItemsAuctioned(keyword);
+    	for (Item item : items) {
+            if ("Forward".equalsIgnoreCase(item.getAuctionType())) {
+                ForwardAuction forwardAuction = catalogueService.getForwardAuctionByItemId(item.getItemId());
+                item.setAuctionType("Forward Auction (Remaining Time: " + forwardAuction.getRemainingTime() + "hrs)");
+            } else if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
+                DutchAuction dutchAuction = catalogueService.getDutchAuctionByItemId(item.getItemId());
+                item.setAuctionType("Dutch Auction - Decrementing price of $" + dutchAuction.getDecrementPrice() + " per hour");
+            }
+        }
+        return items;
     }
 }

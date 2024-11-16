@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-
 @Controller
 public class UserController {
 
@@ -30,11 +29,6 @@ public class UserController {
         return "register";
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegistrationRequest registrationDto) {
-        userService.registerUser(registrationDto.getUserCredentials(), registrationDto.getUserInfo(), registrationDto.getUserAddress());
-        return ResponseEntity.ok("Registration successful!");
-    }
 
     // Login GET Method
     @GetMapping("/login")
@@ -43,40 +37,31 @@ public class UserController {
         return "login";
     }
 
+
+
+ // Login POST Method
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserCredentials userCredentials) {
+    public String loginUser(@ModelAttribute UserCredentials userCredentials, Model model) {
+
         boolean isAuthenticated = userService.authenticateUser(userCredentials);  // Check if user credentials are valid
 
         if (isAuthenticated) {
-            return ResponseEntity.ok("Login successful");
+            return "welcome";
         } else {
-            return ResponseEntity.status(401).body("Invalid username or password");
+            model.addAttribute("errorMessage", "Invalid username or password");
+            return "login";
         }
     }
 
+    @PostMapping("/register")
+    public String registerUser(
+            @ModelAttribute UserInfo userInfo,
+            @ModelAttribute UserCredentials userCredentials,
+            @ModelAttribute UserAddress userAddress,
+            Model model) {
 
-//    // Login POST Method
-//    @PostMapping("/login")
-//    public String loginUser(@ModelAttribute UserCredentials userCredentials, Model model) {
-//
-//        boolean isAuthenticated = userService.authenticateUser(userCredentials);  // Check if user credentials are valid
-//
-//        if (isAuthenticated) {
-//            return "welcome";
-//        } else {
-//            model.addAttribute("errorMessage", "Invalid username or password");
-//            return "login";
-//        }
-//    }
+        userService.registerUser(userCredentials, userInfo, userAddress);
+        return "redirect:/login";
+    }
 
-    //    @PostMapping("/register")
-//    public String registerUser(
-//            @ModelAttribute UserInfo userInfo,
-//            @ModelAttribute UserCredentials userCredentials,
-//            @ModelAttribute UserAddress userAddress,
-//            Model model) {
-//
-//        userService.registerUser(userCredentials, userInfo, userAddress);
-//        return "redirect:/login";
-//    }
 }
