@@ -35,12 +35,11 @@ public class UserService {
 
     public boolean authenticateUser(UserCredentials userCredentials) {
         UserCredentials existingUser = userCredentialsRepository.findByUsername(userCredentials.getUsername());
-        return existingUser.getPassword().equals(userCredentials.getPassword()); // If user is found and password matches
+        Boolean authStatus = existingUser.getPassword().equals(userCredentials.getPassword());
+        if (authStatus) {
+        	userCredentials.setUserId(existingUser.getUserId());
+        }
+        return authStatus; // If user is found and password matches
     }
     
-    public UserCredentials findUser(UserCredentials userCredentials) {
-    	UserCredentials foundUser = userCredentialsRepository.findByUsername(userCredentials.getUsername());
-    	return foundUser;
-    }
-
 }

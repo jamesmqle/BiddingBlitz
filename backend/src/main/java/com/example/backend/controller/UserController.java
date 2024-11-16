@@ -58,8 +58,9 @@ public class UserController {
 
         if (isAuthenticated) {
         	HttpSession session = request.getSession();
-        	String sessionId = Long.toString(userService.findUser(userCredentials).getUserId());
+        	Long sessionId = userCredentials.getUserId();
         	session.setAttribute("userId", sessionId);
+        	System.out.println(session.getAttribute("userId"));
 
             return "redirect:/auction/welcome";
         } else {

@@ -8,6 +8,9 @@ import com.example.backend.repository.auction.ForwardAuctionRepository;
 import com.example.backend.repository.auction.DutchAuctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -114,6 +117,19 @@ public class AuctionService {
 
     private Long getWinningUserId(Item item) {
         return item.getItemId()!=null ? item.getItemId() : null;
+    }
+    @Transactional
+    public void itemInfo(Long itemId, Item item) {
+    	Optional<Item> findItem = itemRepository.findById(itemId);
+    	Item originalItem = findItem.get();
+    	item.setAuctionType(originalItem.getAuctionType());
+    	item.setExpeditedShipping(originalItem.getExpeditedShipping());
+    	item.setItemId(originalItem.getItemId());
+    	item.setItemPrice(originalItem.getItemPrice());
+    	item.setName(originalItem.getName());
+    	item.setShippingPrice(originalItem.getShippingPrice());
+    	item.setWinnerId(originalItem.getWinnerId());
+    	
     }
     
 }
