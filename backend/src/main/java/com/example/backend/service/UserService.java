@@ -34,9 +34,18 @@ public class UserService {
         userAddressRepository.save(userAddress); // Save the address in the user database
     }
 
-    public boolean authenticateUser(UserCredentials userCredentials) {
+    public Long authenticateUser(UserCredentials userCredentials) {
+        // Find the user by username
         UserCredentials existingUser = userCredentialsRepository.findByUsername(userCredentials.getUsername());
-        return existingUser.getPassword().equals(userCredentials.getPassword()); // If user is found and password matches
+
+        // Check if user exists and password matches
+        if (existingUser != null && existingUser.getPassword().equals(userCredentials.getPassword())) {
+            // If authentication is successful, return the userId
+            return existingUser.getUserId();
+        }
+
+        // If authentication fails, return null
+        return null;
     }
 
     public UserDetailsDTO getUserDetails(Long userId) {
