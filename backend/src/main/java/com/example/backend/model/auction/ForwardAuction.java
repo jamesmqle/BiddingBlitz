@@ -1,5 +1,6 @@
 package com.example.backend.model.auction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,7 @@ public class ForwardAuction {
     private Double remainingTime;  // Remaining time in the auction
 
     // One-to-one relationship with Item (itemId is used as the foreign key)
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "itemId", referencedColumnName = "itemId", insertable = false, updatable = false)
     private Item item;

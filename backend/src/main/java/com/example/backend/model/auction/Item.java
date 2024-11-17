@@ -11,10 +11,11 @@ public class Item {
     private Long itemId;  // item_id is the primary key
 
     private String name;
+    private String description;
     private String auctionType;  // The type of auction (e.g., "Forward", "Dutch")
     private Double itemPrice;    // Price of the item
     private Double shippingPrice;  // Shipping price for the item
-    private Double expeditedShipping;  // Expedited shipping cost
+    private Boolean isExpeditedShipping;  // Whether user chooses expedited shipping
     private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
 
     // Getters and setters
@@ -33,6 +34,10 @@ public class Item {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
 
     public String getAuctionType() {
         return auctionType;
@@ -58,12 +63,12 @@ public class Item {
         this.shippingPrice = shippingPrice;
     }
 
-    public Double getExpeditedShipping() {
-        return expeditedShipping;
+    public Boolean getIsExpeditedShipping() {
+        return isExpeditedShipping;
     }
 
-    public void setExpeditedShipping(Double expeditedShipping) {
-        this.expeditedShipping = expeditedShipping;
+    public void setIsExpeditedShipping(Boolean isExpeditedShipping) {
+        this.isExpeditedShipping = isExpeditedShipping;
     }
 
     public Long getWinnerId() {

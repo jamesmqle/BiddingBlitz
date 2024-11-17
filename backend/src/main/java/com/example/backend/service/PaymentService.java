@@ -28,7 +28,7 @@ public class PaymentService {
 
             double totalPaid = item.getItemPrice() + item.getShippingPrice();
             if (expeditedShipping) {
-                totalPaid += item.getExpeditedShipping();
+//                totalPaid += item.getIsExpeditedShipping();
             }
 
             TransactionHistory transaction = new TransactionHistory();
