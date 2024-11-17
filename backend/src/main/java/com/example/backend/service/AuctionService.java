@@ -104,11 +104,12 @@ public class AuctionService {
 
     public Item endAuction(Long itemId) {
 
-        if (itemId == null) {
-            throw new IllegalArgumentException("Item not found");
-        }
-
         Item item = itemRepository.getReferenceById(itemId);
+
+//        if (item.getWinnerId() == null) {
+//            throw new IllegalArgumentException("No Winner");
+//        }
+
         item.setWinnerId(getWinningUserId(item));  // Assume logic to get winning user
         itemRepository.save(item);
         return item;
@@ -134,7 +135,7 @@ public class AuctionService {
 
     @Scheduled(initialDelay = 12000, fixedDelay = 12000)
     public void dutchPriceSystem() {
-        List<DutchAuction> auctionList = dutchAuctionRepository.findAll();
+        List<DutchAuction> auctionList = dutchAuctionRepository.findByWinnerIdIsNull();
         for (DutchAuction auction : auctionList) {
             if (auction != null) {
                 Item item = auction.getItem();
@@ -150,12 +151,15 @@ public class AuctionService {
 
     @Scheduled(initialDelay = 6000, fixedDelay = 6000)
     public void forwardTimeSystem() {
-        List<ForwardAuction> auctionList = forwardAuctionRepository.findAll();
+        List<ForwardAuction> auctionList = forwardAuctionRepository.findByRemainingTimeGreaterThan(0L);
         for (ForwardAuction auction : auctionList) {
             System.out.println(auction);
             if (auction != null && auction.getRemainingTime() > 0) {
                 auction.setRemainingTime(auction.getRemainingTime() - 6000);
                 forwardAuctionRepository.save(auction);
+                if (auction.getRemainingTime() < 0) {
+                    endAuction(auction.getItemId());
+                }
             }
         }
 
