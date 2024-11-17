@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @Service
 public class AuctionService {
@@ -69,6 +67,7 @@ public class AuctionService {
         System.out.println("Dutch auction started for item: " + item.getName());
     }
 
+    @Transactional
     public void placeBid(Long itemId, Double bidAmount, Long userId) throws Exception {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new Exception("Item not found"));
@@ -102,17 +101,16 @@ public class AuctionService {
         startAuction(savedItem);
     }
 
-    public Item endAuction(Long itemId) {
-
+    @Transactional
+    public void endAuction(Long itemId, Long userId) {
         Item item = itemRepository.getReferenceById(itemId);
-
-//        if (item.getWinnerId() == null) {
-//            throw new IllegalArgumentException("No Winner");
-//        }
-
-        item.setWinnerId(getWinningUserId(item));  // Assume logic to get winning user
+        if (userId != null) {
+            if (item.getWinnerId() == null) {
+                item.setWinnerId(getWinningUserId(item));
+            }
+        }
+        item.setAuctionStatus("Ended");
         itemRepository.save(item);
-        return item;
     }
 
     private Long getWinningUserId(Item item) {
@@ -133,6 +131,7 @@ public class AuctionService {
         }
     }
 
+    @Transactional
     @Scheduled(initialDelay = 12000, fixedDelay = 12000)
     public void dutchPriceSystem() {
         List<DutchAuction> auctionList = dutchAuctionRepository.findByItemWinnerIdIsNull();
@@ -146,9 +145,9 @@ public class AuctionService {
                 }
             }
         }
-
     }
 
+    @Transactional
     @Scheduled(initialDelay = 6000, fixedDelay = 6000)
     public void forwardTimeSystem() {
         List<ForwardAuction> auctionList = forwardAuctionRepository.findByRemainingTimeGreaterThan(0L);
@@ -158,11 +157,10 @@ public class AuctionService {
                 auction.setRemainingTime(auction.getRemainingTime() - 6000);
                 forwardAuctionRepository.save(auction);
                 if (auction.getRemainingTime() < 0) {
-                    endAuction(auction.getItemId());
+                    endAuction(auction.getItemId(), null);
                 }
             }
         }
-
     }
 }
 

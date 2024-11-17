@@ -52,19 +52,6 @@ const UserDetailsFetcher: React.FC<UserDetailsFetcherProps> = ({
         });
     }
   }, []);
-  // useEffect(() => {
-  //   if (userId) {
-  //     getUserDetails(userId)
-  //       .then((response: { data: UserDetails | null }) => {
-  //         onUserDetailsFetched(response.data); // Send the fetched data to the parent
-  //         setLoading(false); // Set loading to false once data is fetched
-  //       })
-  //       .catch(() => {
-  //         setError("Error fetching user details");
-  //         setLoading(false); // Set loading to false on error
-  //       });
-  //   }
-  // }, [userId, onUserDetailsFetched]);
 
   // Show loading and error states
   if (loading) {

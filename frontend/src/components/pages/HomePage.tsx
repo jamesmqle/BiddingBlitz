@@ -30,15 +30,15 @@ const HomePage: React.FC = () => {
                 {userDetails.userInfo.lastName}
               </h2>
               <p>
-                Street Address: {userDetails.userAddress.streetAddress},{" "}
-                {userDetails.userAddress.city}
-              </p>
-              <p>
-                Postal Code: {userDetails.userAddress.postalCode},{" "}
+                Street Address: {userDetails.userAddress.streetNumber}{" "}
+                {userDetails.userAddress.streetAddress},{" "}
+                {userDetails.userAddress.city},{" "}
                 {userDetails.userAddress.country}
               </p>
+              <p>Postal Code: {userDetails.userAddress.postalCode}, </p>
             </div>
           )}
+          <Link to="/catalogue">Browse Items</Link>
         </>
       ) : (
         <>

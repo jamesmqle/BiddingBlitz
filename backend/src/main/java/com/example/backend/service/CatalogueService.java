@@ -10,7 +10,9 @@ import com.example.backend.repository.auction.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CatalogueService {
@@ -26,9 +28,22 @@ public class CatalogueService {
         this.forwardAuctionRepository = forwardAuctionRepository;
     }
 
-    public List<Item> searchItemsAuctioned(String keyword) {
-        // Use the repository method with wildcard matching
-        return itemRepository.findByNameContaining(keyword);
+    // Search for items based on the provided keyword, return all items if keyword is null
+    public List<ItemDetailsDTO> searchItemsAuctioned(String keyword) {
+        List<Item> items;
+
+        if (keyword == null || keyword.isEmpty()) {
+            // If keyword is null or empty, return all items
+            items = itemRepository.findAll();
+        } else {
+            // If keyword is provided, perform a search by name containing the keyword
+            items = itemRepository.findByNameContaining(keyword);
+        }
+
+        // Use the existing getItemDetails method to map each item to its respective DTO
+        return items.stream()
+                .map(item -> getItemDetails(item.getItemId()))  // Reuse the existing method for mapping
+                .collect(Collectors.toList());
     }
 
     // Method to fetch Item and map it to ItemDetailsDTO
@@ -39,12 +54,10 @@ public class CatalogueService {
 
         // Check auction type and add relevant auction data to DTO
         if ("Forward".equalsIgnoreCase(item.getAuctionType())) {
-            ForwardAuction forwardAuction = forwardAuctionRepository.findById(item.getItemId())
-                    .orElseThrow(() -> new RuntimeException("Forward Auction data not found"));
+            ForwardAuction forwardAuction = forwardAuctionRepository.findByItemId(item.getItemId());
             return new ItemDetailsDTO(item, forwardAuction);
         } else if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
-            DutchAuction dutchAuction = dutchAuctionRepository.findById(item.getItemId())
-                    .orElseThrow(() -> new RuntimeException("Dutch Auction data not found"));
+            DutchAuction dutchAuction = dutchAuctionRepository.findByItemId(item.getItemId());
             return new ItemDetailsDTO(item, dutchAuction);
         }
 

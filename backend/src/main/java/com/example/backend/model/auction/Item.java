@@ -13,6 +13,7 @@ public class Item {
     private String name;
     private String description;
     private String auctionType;  // The type of auction (e.g., "Forward", "Dutch")
+    private String auctionStatus; // status of auction (e.g., "Active", "Ended")
     private Double itemPrice;    // Price of the item
     private Double shippingPrice;  // Shipping price for the item
     private Boolean isExpeditedShipping;  // Whether user chooses expedited shipping
@@ -45,6 +46,14 @@ public class Item {
 
     public void setAuctionType(String auctionType) {
         this.auctionType = auctionType;
+    }
+
+    public String getAuctionStatus() {
+        return auctionStatus;
+    }
+
+    public void setAuctionStatus(String auctionStatus) {
+        this.auctionStatus = auctionStatus;
     }
 
     public Double getItemPrice() {

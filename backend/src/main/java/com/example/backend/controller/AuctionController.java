@@ -30,8 +30,8 @@ public class AuctionController {
 
     // To handle auction end event for both types
     @PostMapping("/end/{itemId}")
-    public ResponseEntity<String> endAuction(@PathVariable Long itemId) {
-        auctionService.endAuction(itemId);
+    public ResponseEntity<String> endAuction(@PathVariable Long itemId, @RequestParam(required = false) Long userId) {
+        auctionService.endAuction(itemId, userId);
         return ResponseEntity.ok("Auction ended successfully.");
     }
 
