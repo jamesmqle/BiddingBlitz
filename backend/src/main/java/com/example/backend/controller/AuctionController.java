@@ -14,8 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/auction")
+@RestController
+@RequestMapping("/api/auction")
 public class AuctionController {
 
     @Autowired
@@ -96,5 +96,11 @@ public class AuctionController {
     	model.addAttribute("userId", checking);
         return "welcome";
     }
+    
+	@PostMapping("/registerItem")
+	public ResponseEntity<String> registerItem(@RequestBody Item item) {
+		auctionService.registerItem(item);
+		return ResponseEntity.ok("Item Successfully Registered");
+	}
     
 }

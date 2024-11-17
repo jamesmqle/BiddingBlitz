@@ -35,6 +35,7 @@ public class AuctionService {
         }
     }
 
+    @Transactional
     private void startForwardAuction(Item item) {
         // Logic for Forward Auction:
         item.setItemPrice(item.getItemPrice() != null ? item.getItemPrice() : 0.0);
@@ -49,7 +50,13 @@ public class AuctionService {
                 endAuction(item.getItemId());
             }
         }, auctionDuration);
-
+        
+        ForwardAuction forwardAuction = new ForwardAuction();
+        forwardAuction.setItem(item);
+        forwardAuction.setItemId(item.getItemId());
+        forwardAuction.setRemainingTime((double) auctionDuration);
+        
+        forwardAuctionRepository.save(forwardAuction);
         System.out.println("Forward auction started for item: " + item.getName());
     }
 
@@ -57,12 +64,24 @@ public class AuctionService {
         // Initial decrement price and frequency (e.g., decrement every 2 minutes)
         double decrementAmount = item.getItemPrice() * 0.05; // 5% decrement
         long decrementInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
+        double minPrice = item.getItemPrice() * 0.5; //minimum 50% price
         Timer timer = new Timer();
 
+        DutchAuction dutchAuction = new DutchAuction();
+        dutchAuction.setItem(item);
+        dutchAuction.setItemId(item.getItemId());
+        dutchAuction.setDecrementPrice(decrementAmount);
+        dutchAuction.setTimeInterval((double)decrementInterval);
+        dutchAuction.setMinPrice(minPrice);
+        
+        dutchAuctionRepository.save(dutchAuction);
+        
+        System.out.println("Dutch auction started for item: " + item.getName());
+        
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (item.getItemPrice() > decrementAmount) {
+                if (item.getItemPrice() > decrementAmount || item.getItemPrice() > minPrice) {
                     item.setItemPrice(item.getItemPrice() - decrementAmount);
                     System.out.println("Dutch auction price updated for item: " + item.getName() +
                             " - New price: $" + item.getItemPrice());
@@ -73,7 +92,6 @@ public class AuctionService {
             }
         }, 0, decrementInterval);
 
-        System.out.println("Dutch auction started for item: " + item.getName());
     }
 
     public void placeBid(Long itemId, Double bidAmount, Long userId) throws Exception {
@@ -130,6 +148,12 @@ public class AuctionService {
     	item.setShippingPrice(originalItem.getShippingPrice());
     	item.setWinnerId(originalItem.getWinnerId());
     	
+    }
+    
+    @Transactional
+    public void registerItem(Item item) {
+    	Item savedItem = itemRepository.save(item);
+    	startAuction(savedItem);
     }
     
 }
