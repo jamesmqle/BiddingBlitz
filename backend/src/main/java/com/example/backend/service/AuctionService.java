@@ -89,7 +89,7 @@ public class AuctionService {
             item.setItemPrice(bidAmount);
             item.setWinnerId(userId);
             itemRepository.save(item);
-
+            endAuction(itemId);
         } else {
             throw new Exception("Item not up for auction.");
         }
@@ -102,15 +102,23 @@ public class AuctionService {
     }
 
     @Transactional
-    public void endAuction(Long itemId, Long userId) {
-        Item item = itemRepository.getReferenceById(itemId);
-        if (userId != null) {
-            if (item.getWinnerId() == null) {
-                item.setWinnerId(getWinningUserId(item));
+    public void endAuction(Long itemId) throws Exception {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new Exception("item not found"));
+
+
+        if (item != null) {
+            if ("Active".equalsIgnoreCase(item.getAuctionStatus())) {
+                item.setAuctionStatus("Ended");
+                itemRepository.save(item);
+            }
+            else {
+                throw new Exception("Auction has already ended");
             }
         }
-        item.setAuctionStatus("Ended");
-        itemRepository.save(item);
+        else {
+            throw new Exception("item not found");
+        }
     }
 
     private Long getWinningUserId(Item item) {
@@ -149,15 +157,16 @@ public class AuctionService {
 
     @Transactional
     @Scheduled(initialDelay = 6000, fixedDelay = 6000)
-    public void forwardTimeSystem() {
+    public void forwardTimeSystem() throws Exception {
         List<ForwardAuction> auctionList = forwardAuctionRepository.findByRemainingTimeGreaterThan(0L);
         for (ForwardAuction auction : auctionList) {
             System.out.println(auction);
-            if (auction != null && auction.getRemainingTime() > 0) {
+            if (auction != null) {
+                if (auction.getRemainingTime() > 0)
                 auction.setRemainingTime(auction.getRemainingTime() - 6000);
                 forwardAuctionRepository.save(auction);
-                if (auction.getRemainingTime() < 0) {
-                    endAuction(auction.getItemId(), null);
+                if (auction.getRemainingTime() <= 0) {
+                    endAuction(auction.getItemId());
                 }
             }
         }
