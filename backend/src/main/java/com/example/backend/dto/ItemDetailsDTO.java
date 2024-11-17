@@ -9,6 +9,8 @@ public class ItemDetailsDTO {
     private ForwardAuction forwardAuction;
     private DutchAuction dutchAuction;
 
+    public ItemDetailsDTO() {}
+
     public ItemDetailsDTO (Item item) {
         this.item = item;
     }

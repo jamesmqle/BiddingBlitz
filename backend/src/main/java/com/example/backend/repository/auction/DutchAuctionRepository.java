@@ -4,4 +4,5 @@ import com.example.backend.model.auction.DutchAuction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DutchAuctionRepository extends JpaRepository<DutchAuction, Long> {
+    DutchAuction findByItemId(Long itemId);
 }

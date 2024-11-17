@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/api/payment")
 public class PaymentController {
 
     @Autowired
@@ -15,5 +15,10 @@ public class PaymentController {
     @PostMapping("/pay")
     public TransactionHistory payForAuction(@RequestParam Long itemId, @RequestParam Long userId, @RequestParam boolean expedited) {
         return paymentService.processPayment(itemId, userId, expedited);
+    }
+
+    @GetMapping("/paidInfo")
+    public TransactionHistory paidInfo(@RequestParam Long itemId) {
+        return paymentService.transactionInfo(itemId);
     }
 }

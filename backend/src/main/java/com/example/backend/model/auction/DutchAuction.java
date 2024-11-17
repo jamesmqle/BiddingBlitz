@@ -9,7 +9,9 @@ public class DutchAuction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long itemId;  // Primary key for DutchAuction, also a foreign key
+    private Long id;  // Primary key for DutchAuction
+
+    private Long itemId;// Foreign key
     private Double minPrice; // Minimum price the item can go for
     private Double decrementPrice;   // amount the price decreases over time
     private Double timeInterval;  // time interval (in seconds) price will decrease
@@ -21,6 +23,15 @@ public class DutchAuction {
     private Item item;
 
     // Getters and setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getItemId() {
         return itemId;
     }

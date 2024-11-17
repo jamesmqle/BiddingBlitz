@@ -6,9 +6,12 @@ import com.example.backend.model.auction.DutchAuction;
 import com.example.backend.repository.auction.ItemRepository;
 import com.example.backend.repository.auction.ForwardAuctionRepository;
 import com.example.backend.repository.auction.DutchAuctionRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,43 +37,35 @@ public class AuctionService {
     }
 
     private void startForwardAuction(Item item) {
-        // Logic for Forward Auction:
+        // Forward Auction setup
         item.setItemPrice(item.getItemPrice() != null ? item.getItemPrice() : 0.0);
-        Timer timer = new Timer();
-
-        // For example, 10-minute duration for forward auction
         long auctionDuration = 10 * 60 * 1000; // 10 minutes in milliseconds
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                // End auction and notify users
-                endAuction(item.getItemId());
-            }
-        }, auctionDuration);
 
+        ForwardAuction forwardAuction = new ForwardAuction();
+        forwardAuction.setItem(item);
+        forwardAuction.setItemId(item.getItemId());
+        forwardAuction.setRemainingTime((double) auctionDuration);
+
+        forwardAuctionRepository.save(forwardAuction);
         System.out.println("Forward auction started for item: " + item.getName());
     }
 
+    @Transactional
     private void startDutchAuction(Item item) {
-        // Initial decrement price and frequency (e.g., decrement every 2 minutes)
+        // Dutch Auction setup
+
         double decrementAmount = item.getItemPrice() * 0.05; // 5% decrement
         long decrementInterval = 2 * 60 * 1000; // 2 minutes in milliseconds
-        Timer timer = new Timer();
+        double minPrice = item.getItemPrice() * 0.5; // 50% min price
 
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (item.getItemPrice() > decrementAmount) {
-                    item.setItemPrice(item.getItemPrice() - decrementAmount);
-                    System.out.println("Dutch auction price updated for item: " + item.getName() +
-                            " - New price: $" + item.getItemPrice());
-                } else {
-                    timer.cancel();
-                    endAuction(item.getItemId());
-                }
-            }
-        }, 0, decrementInterval);
+        DutchAuction dutchAuction = new DutchAuction();
+        dutchAuction.setItem(item);
+        dutchAuction.setItemId(item.getItemId());
+        dutchAuction.setDecrementPrice(decrementAmount);
+        dutchAuction.setTimeInterval((double)decrementInterval);
+        dutchAuction.setMinPrice(minPrice);
 
+        dutchAuctionRepository.save(dutchAuction);
         System.out.println("Dutch auction started for item: " + item.getName());
     }
 
@@ -122,4 +117,48 @@ public class AuctionService {
     private Long getWinningUserId(Item item) {
         return item.getItemId()!=null ? item.getItemId() : null;
     }
+
+    //
+    @Transactional
+    public void updatePrice(Long itemId) {
+        Item item = itemRepository.getReferenceById(itemId);
+        if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
+            DutchAuction auction = dutchAuctionRepository.getReferenceById(itemId);
+            if (item.getItemPrice() > auction.getMinPrice()) {
+                Double newPrice = item.getItemPrice() - auction.getDecrementPrice();
+                item.setItemPrice(newPrice);
+                itemRepository.save(item);
+            }
+        }
+    }
+
+    @Scheduled(initialDelay = 12000, fixedDelay = 12000)
+    public void dutchPriceSystem() {
+        List<DutchAuction> auctionList = dutchAuctionRepository.findAll();
+        for (DutchAuction auction : auctionList) {
+            if (auction != null) {
+                Item item = auction.getItem();
+                if (item.getItemPrice() > auction.getMinPrice()) {
+                    Double newPrice = item.getItemPrice() - auction.getDecrementPrice();
+                    item.setItemPrice(newPrice);
+                    itemRepository.save(item);
+                }
+            }
+        }
+
+    }
+
+    @Scheduled(initialDelay = 6000, fixedDelay = 6000)
+    public void forwardTimeSystem() {
+        List<ForwardAuction> auctionList = forwardAuctionRepository.findAll();
+        for (ForwardAuction auction : auctionList) {
+            System.out.println(auction);
+            if (auction != null && auction.getRemainingTime() > 0) {
+                auction.setRemainingTime(auction.getRemainingTime() - 6000);
+                forwardAuctionRepository.save(auction);
+            }
+        }
+
+    }
 }
+
