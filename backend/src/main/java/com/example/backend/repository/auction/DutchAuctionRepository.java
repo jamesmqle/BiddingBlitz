@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface DutchAuctionRepository extends JpaRepository<DutchAuction, Long> {
     DutchAuction findByItemId(Long itemId);
-    List<DutchAuction> findByWinnerIdIsNull();
+    List<DutchAuction> findByItemWinnerIdIsNull();
 }
