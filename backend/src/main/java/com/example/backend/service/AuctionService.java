@@ -160,9 +160,7 @@ public class AuctionService {
     public void forwardTimeSystem() throws Exception {
         List<ForwardAuction> auctionList = forwardAuctionRepository.findByRemainingTimeGreaterThan(0L);
         for (ForwardAuction auction : auctionList) {
-            System.out.println(auction);
             if (auction != null) {
-                if (auction.getRemainingTime() > 0)
                 auction.setRemainingTime(auction.getRemainingTime() - 6000);
                 forwardAuctionRepository.save(auction);
                 if (auction.getRemainingTime() <= 0) {
