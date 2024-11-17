@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.ItemDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -15,6 +16,9 @@ public class CatalogueController {
 
     @Autowired
     private CatalogueService catalogueService;
+
+//    @Autowired
+//    private AuctionService auctionService;
 
 
     // GET request to fetch a single item by its ID and return as JSON
@@ -75,5 +79,11 @@ public class CatalogueController {
 //            }
 //        }
 //        return items;
+//    }
+
+//    @PostMapping("/addItem")
+//    public ResponseEntity<String> addItem(@RequestBody Item item) {
+//        auctionService.addItem(item);
+//        return ResponseEntity.ok("Item Successfully Registered");
 //    }
 }

@@ -6,6 +6,7 @@ import com.example.backend.model.auction.DutchAuction;
 import com.example.backend.repository.auction.ItemRepository;
 import com.example.backend.repository.auction.ForwardAuctionRepository;
 import com.example.backend.repository.auction.DutchAuctionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Timer;
@@ -98,6 +99,12 @@ public class AuctionService {
         } else {
             throw new Exception("Item not up for auction.");
         }
+    }
+
+    @Transactional
+    public void addItem(Item item) {
+        Item savedItem = itemRepository.save(item);
+        startAuction(savedItem);
     }
 
     public Item endAuction(Long itemId) {
