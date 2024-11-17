@@ -6,6 +6,7 @@ import com.example.backend.repository.auction.ItemRepository;
 import com.example.backend.repository.payment.TransactionHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class PaymentService {
     @Autowired
     private TransactionHistoryRepository transactionHistoryRepository;
 
+    @Transactional
     public TransactionHistory processPayment(Long itemId, Long userId, boolean expeditedShipping) {
         Optional<Item> itemOpt = itemRepository.findById(itemId);
         if (itemOpt.isPresent()) {
@@ -41,5 +43,14 @@ public class PaymentService {
             return transaction;
         }
         throw new IllegalArgumentException("Item not found.");
+    }
+
+    public TransactionHistory transactionInfo(Long itemId) {
+        Optional<TransactionHistory> findTransaction = transactionHistoryRepository.findById(itemId);
+        if (findTransaction.isPresent()) {
+            TransactionHistory transaction = findTransaction.get();
+            return transaction;
+        }
+        throw new IllegalArgumentException("Transaction does not exist");
     }
 }
