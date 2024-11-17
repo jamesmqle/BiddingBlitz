@@ -28,58 +28,12 @@ public class CatalogueController {
         return catalogueService.getItemDetails(itemId);
     }
 
-//    // GET request to fetch a single item by its ID and return as JSON
-//    @GetMapping("/item/{id}")
-//    @ResponseBody
-//    public ItemDetailsDTO getItem(@PathVariable("id") Long id) {
-//        // Fetch the item from the service by ID
-//        Item item = catalogueService.getItemById(id);
-//
-//        if (item == null) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
-//        }
-//
-//        // Map the Item to ItemDetailsDTO
-//        ItemDetailsDTO itemDetailsDTO = new ItemDetailsDTO();
-//        itemDetailsDTO.setItemId(item.getItemId());
-//        itemDetailsDTO.setName(item.getName());
-//        itemDetailsDTO.setDescription(item.getDescription());
-//        itemDetailsDTO.setAuctionType(item.getAuctionType());
-//        itemDetailsDTO.setItemPrice(item.getItemPrice());
-//        itemDetailsDTO.setShippingPrice(item.getShippingPrice());
-//        itemDetailsDTO.setIsExpeditedShipping(item.getIsExpeditedShipping());
-//        itemDetailsDTO.setWinnerId(item.getWinnerId());
-//
-//        // Set auction-specific data based on auction type
-//        if ("Forward".equalsIgnoreCase(item.getAuctionType())) {
-//            ForwardAuction forwardAuction = catalogueService.getForwardAuctionByItemId(item.getItemId());
-//            itemDetailsDTO.setRemainingTime(forwardAuction.getRemainingTime());
-//        } else if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
-//            DutchAuction dutchAuction = catalogueService.getDutchAuctionByItemId(item.getItemId());
-//            itemDetailsDTO.setMinPrice(dutchAuction.getMinPrice());
-//            itemDetailsDTO.setDecrementPrice(dutchAuction.getDecrementPrice());
-//            itemDetailsDTO.setTimeInterval(dutchAuction.getTimeInterval());
-//        }
-//
-//        return itemDetailsDTO;
-//    }
-
-//    // GET request to fetch search results as JSON
-//    @GetMapping("/search")
-//    @ResponseBody // Indicates JSON response
-//    public List<Item> getSearchResults(@RequestParam("keyword") String keyword) {
-//        List<Item> items = catalogueService.searchItemsAuctioned(keyword);
-//        for (Item item : items) {
-//            if ("Forward".equalsIgnoreCase(item.getAuctionType())) {
-//                ForwardAuction forwardAuction = catalogueService.getForwardAuctionByItemId(item.getItemId());
-//                item.setAuctionType("Forward Auction (Remaining Time: " + forwardAuction.getRemainingTime() + "hrs)");
-//            } else if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
-//                DutchAuction dutchAuction = catalogueService.getDutchAuctionByItemId(item.getItemId());
-//                item.setAuctionType("Dutch Auction - Decrementing price of $" + dutchAuction.getDecrementPrice() + " per hour");
-//            }
-//        }
-//        return items;
-//    }
+    // GET request to fetch search results as JSON
+    @GetMapping("/search")
+    @ResponseBody // Indicates JSON response
+    public List<ItemDetailsDTO> getSearchedItemDetails(@RequestParam(required = false) String keyword) {
+        return catalogueService.searchItemsAuctioned(keyword);
+    }
 
 //    @PostMapping("/addItem")
 //    public ResponseEntity<String> addItem(@RequestBody Item item) {
