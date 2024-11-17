@@ -135,7 +135,7 @@ public class AuctionService {
 
     @Scheduled(initialDelay = 12000, fixedDelay = 12000)
     public void dutchPriceSystem() {
-        List<DutchAuction> auctionList = dutchAuctionRepository.findByWinnerIdIsNull();
+        List<DutchAuction> auctionList = dutchAuctionRepository.findByItemWinnerIdIsNull();
         for (DutchAuction auction : auctionList) {
             if (auction != null) {
                 Item item = auction.getItem();
