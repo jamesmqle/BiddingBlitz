@@ -8,6 +8,7 @@ import SignUpPage from "./components/pages/SignUpPage";
 import Catalogue from "./components/pages/CataloguePage";
 import ForwardBiddingPage from "./components/pages/ForwardBidding";
 import DutchBiddingPage from "./components/pages/DutchBidding";
+import AuctionEndedPage from "./components/pages/AuctionEndedPage";
 
 const App: React.FC = () => {
   return (
@@ -22,7 +23,8 @@ const App: React.FC = () => {
           element={<ForwardBiddingPage />}
         />
         <Route path="/dutch-bidding/:itemId" element={<DutchBiddingPage />} />
-        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/auction-end/:itemId" element={<AuctionEndedPage />} />
+        <Route path="/payment/:itemId" element={<PaymentPage />} />
         <Route path="/receipt" element={<ReceiptPage />} />
       </Routes>
     </Router>

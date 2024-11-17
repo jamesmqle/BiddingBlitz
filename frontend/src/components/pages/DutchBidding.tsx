@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getItemById } from "../api/CatalogueApi";
 import { placeBid } from "../api/AuctionApi";
 
@@ -7,6 +7,8 @@ const DutchBiddingPage = () => {
   const { itemId } = useParams<{ itemId: string }>();
   const [item, setItem] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null); // Error state
+  const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (itemId) {
@@ -25,14 +27,12 @@ const DutchBiddingPage = () => {
 
   const handleBuyNow = async () => {
     try {
-      const userId = 1; // Replace with actual user ID
-      const message = await placeBid(
+      await placeBid(
         Number(itemId),
         item.item.itemPrice,
-        userId
+        Number(userId)
       );
-      alert(message); // Show success message
-      setItem({ ...item, winnerId: userId }); // Update winner info
+      navigate(`/auction-end/${itemId}`);
     } catch (error: any) {
       setError(error.message); // Display error message
     }

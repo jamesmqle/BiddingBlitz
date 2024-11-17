@@ -73,8 +73,7 @@ public class AuctionService {
                 .orElseThrow(() -> new Exception("Item not found"));
 
         if ("Forward".equalsIgnoreCase(item.getAuctionType())) {
-            ForwardAuction auction = forwardAuctionRepository.findById(itemId)
-                    .orElseThrow(() -> new Exception("Auction not found"));
+            ForwardAuction auction = forwardAuctionRepository.findByItemId(itemId);
 
             if (bidAmount > item.getItemPrice()) {
                 item.setItemPrice(bidAmount);
@@ -84,8 +83,7 @@ public class AuctionService {
                 throw new Exception("Bid amount must be higher than current price.");
             }
         } else if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
-            DutchAuction auction = dutchAuctionRepository.findById(itemId)
-                    .orElseThrow(() -> new Exception("Auction not found"));
+            DutchAuction auction = dutchAuctionRepository.findByItemId(itemId);
             item.setItemPrice(bidAmount);
             item.setWinnerId(userId);
             itemRepository.save(item);
