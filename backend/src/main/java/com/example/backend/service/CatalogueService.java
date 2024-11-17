@@ -54,12 +54,10 @@ public class CatalogueService {
 
         // Check auction type and add relevant auction data to DTO
         if ("Forward".equalsIgnoreCase(item.getAuctionType())) {
-            ForwardAuction forwardAuction = forwardAuctionRepository.findById(item.getItemId())
-                    .orElseThrow(() -> new RuntimeException("Forward Auction data not found"));
+            ForwardAuction forwardAuction = forwardAuctionRepository.findByItemId(item.getItemId());
             return new ItemDetailsDTO(item, forwardAuction);
         } else if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
-            DutchAuction dutchAuction = dutchAuctionRepository.findById(item.getItemId())
-                    .orElseThrow(() -> new RuntimeException("Dutch Auction data not found"));
+            DutchAuction dutchAuction = dutchAuctionRepository.findByItemId(item.getItemId());
             return new ItemDetailsDTO(item, dutchAuction);
         }
 
