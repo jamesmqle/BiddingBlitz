@@ -34,10 +34,10 @@ public class CatalogueService {
 
         if (keyword == null || keyword.isEmpty()) {
             // If keyword is null or empty, return all items
-            items = itemRepository.findByAuctionStatus("Active");
+            items = itemRepository.findAll();
         } else {
             // If keyword is provided, perform a search by name containing the keyword
-            items = itemRepository.findByAuctionStatusAndNameContaining("Active",keyword);
+            items = itemRepository.findByNameContaining(keyword);
         }
 
         // Use the existing getItemDetails method to map each item to its respective DTO

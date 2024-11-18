@@ -1,9 +1,13 @@
 package com.example.backend.service;
 
 import com.example.backend.model.auction.Item;
+import com.example.backend.model.user.UserAddress;
+import com.example.backend.model.user.UserInfo;
 import com.example.backend.model.auction.ForwardAuction;
+import com.example.backend.dto.UserDetailsDTO;
 import com.example.backend.model.auction.DutchAuction;
 import com.example.backend.repository.auction.ItemRepository;
+import com.example.backend.repository.user.UserInfoRepository;
 import com.example.backend.repository.auction.ForwardAuctionRepository;
 import com.example.backend.repository.auction.DutchAuctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,9 @@ public class AuctionService {
     private ForwardAuctionRepository forwardAuctionRepository;
     @Autowired
     private DutchAuctionRepository dutchAuctionRepository;
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+    
 
     // Starts the auction based on the type of auction (Forward or Dutch)
     public void startAuction(Item item) {
@@ -78,6 +85,7 @@ public class AuctionService {
             if (bidAmount > item.getItemPrice()) {
                 item.setItemPrice(bidAmount);
                 item.setWinnerId(userId);
+                item.addBidderId(userId);
                 itemRepository.save(item);
             } else {
                 throw new Exception("Bid amount must be higher than current price.");
@@ -86,6 +94,7 @@ public class AuctionService {
             DutchAuction auction = dutchAuctionRepository.findByItemId(itemId);
             item.setItemPrice(bidAmount);
             item.setWinnerId(userId);
+            item.addBidderId(userId);
             itemRepository.save(item);
             endAuction(itemId);
         } else {
@@ -100,24 +109,34 @@ public class AuctionService {
     }
 
     @Transactional
-    public void endAuction(Long itemId) throws Exception {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new Exception("item not found"));
+    public List<UserDetailsDTO> endAuction(Long itemId) throws Exception {
+        Item item = itemRepository.findByItemId(itemId)
+                .orElseThrow(() -> new Exception("Item not found"));
 
+        if (!"Active".equalsIgnoreCase(item.getAuctionStatus())) {
+            throw new Exception("Auction has already ended or item not active for auction.");
+        }
 
-        if (item != null) {
-            if ("Active".equalsIgnoreCase(item.getAuctionStatus())) {
-                item.setAuctionStatus("Ended");
-                itemRepository.save(item);
-            }
-            else {
-                throw new Exception("Auction has already ended");
-            }
-        }
-        else {
-            throw new Exception("item not found");
-        }
+        item.setAuctionStatus("Ended");
+        itemRepository.save(item);
+
+        // Notify users and collect bidder details
+        List<Long> bidderIds = item.getBidderIds();
+        List<UserDetailsDTO> bidderDetails = bidderIds.stream()
+                .map(userId -> {
+                    UserInfo userInfo = userInfoRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("User not found"));
+
+                    UserAddress address = userInfo.getAddress();
+                    return new UserDetailsDTO(userInfo, address);
+                })
+                .toList();
+
+        bidderIds.forEach(userId -> notifyUser(userId, item.getName(), item.getAuctionType()));
+
+        return bidderDetails;
     }
+
 
     private Long getWinningUserId(Item item) {
         return item.getItemId()!=null ? item.getItemId() : null;
@@ -167,5 +186,32 @@ public class AuctionService {
             }
         }
     }
+    
+    @Transactional
+    public List<UserDetailsDTO> getBiddersForItem(Long itemId) throws Exception {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new Exception("Item not found"));
+
+        // Assuming you store user information in a User table
+        List<Long> bidderIds = item.getBidderIds(); // Retrieve the list of bidder IDs
+
+        return bidderIds.stream()
+                .map(userId -> {
+                    UserInfo userInfo = userInfoRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("User not found"));
+
+                    UserAddress address = userInfo.getAddress();
+                    return new UserDetailsDTO(userInfo, address);
+                })
+                .toList();
+    }
+
+    
+    private void notifyUser(Long userId, String itemName, String auctionType) {
+        System.out.println("Notified user " + userId + " that the auction for " + itemName 
+                + " (" + auctionType + ") has ended.");
+    }
+    
+    
 }
 

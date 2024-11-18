@@ -1,7 +1,11 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ItemDetailsDTO;
+import com.example.backend.dto.UserDetailsDTO;
 import com.example.backend.service.AuctionService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +33,9 @@ public class AuctionController {
     }
 
     // To handle auction end event for both types
-    @PostMapping("/end/{itemId}")
-    public ResponseEntity<String> endAuction(@PathVariable Long itemId) throws Exception {
-        auctionService.endAuction(itemId);
-        return ResponseEntity.ok("Auction ended successfully.");
+    @GetMapping("/end/{itemId}")
+    public List<UserDetailsDTO> endAuction(@PathVariable Long itemId) throws Exception {
+        return auctionService.endAuction(itemId);
     }
 
     // Command to Register Items

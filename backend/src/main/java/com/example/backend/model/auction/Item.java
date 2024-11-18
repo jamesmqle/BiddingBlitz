@@ -1,5 +1,8 @@
 package com.example.backend.model.auction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +22,11 @@ public class Item {
     private Boolean isExpeditedShipping;  // Whether user chooses expedited shipping
     private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
 
+    @ElementCollection
+    @CollectionTable(name = "item_bidders", joinColumns = @JoinColumn(name = "itemId"))
+    @Column(name = "bidderId")
+    private List<Long> bidderIds = new ArrayList<>();
+    
     // Getters and setters
     public Long getItemId() {
         return itemId;
@@ -87,4 +95,19 @@ public class Item {
     public void setWinnerId(Long winnerId) {
         this.winnerId = winnerId;
     }
+    
+    public List<Long> getBidderIds() {
+        return bidderIds;
+    }
+
+    public void setBidderIds(List<Long> bidderIds) {
+        this.bidderIds = bidderIds;
+    }
+
+    public void addBidderId(Long userId) {
+        if (!bidderIds.contains(userId)) {
+            bidderIds.add(userId);
+        }
+    }
+    
 }

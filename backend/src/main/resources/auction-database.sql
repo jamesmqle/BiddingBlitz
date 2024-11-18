@@ -49,3 +49,27 @@ VALUES
 (16, 100.00, 10.00, 600), -- 10 minutes interval
 (18, 600.00, 30.00, 600), -- 10 minutes interval
 (20, 400.00, 20.00, 600); -- 10 minutes interval
+
+-- Insert bidders into the `item_bidders` table with bidderId 1 to 20
+INSERT INTO item_bidders (itemId, bidderId)
+VALUES
+(1, 1),
+(1, 2),
+(3, 3),
+(3, 4),
+(5, 5),
+(5, 6),
+(7, 7),
+(7, 8),
+(9, 9),
+(9, 10),
+(11, 11),
+(11, 12),
+(13, 13),
+(13, 14),
+(15, 15),
+(15, 16),
+(17, 17),
+(17, 18),
+(19, 19),
+(19, 20);
