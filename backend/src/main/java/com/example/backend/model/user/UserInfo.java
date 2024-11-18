@@ -1,5 +1,6 @@
 package com.example.backend.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,7 @@ public class UserInfo {
     private String firstName;
     private String lastName;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private UserAddress address;  // One-to-one with UserAddress
 

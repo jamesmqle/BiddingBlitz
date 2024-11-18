@@ -1,5 +1,8 @@
 package com.example.backend.model.auction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -11,28 +14,19 @@ public class Item {
     private Long itemId;  // item_id is the primary key
 
     private String name;
+    private String description;
     private String auctionType;  // The type of auction (e.g., "Forward", "Dutch")
+    private String auctionStatus; // status of auction (e.g., "Active", "Ended")
     private Double itemPrice;    // Price of the item
     private Double shippingPrice;  // Shipping price for the item
-    private Double expeditedShipping;  // Expedited shipping cost
+    private Boolean isExpeditedShipping;  // Whether user chooses expedited shipping
     private Long winnerId;         // ID of the winner (references a user without a foreign key constraint)
 
-    // Default constructor class
-    public Item(){
-        
-    }
-
-    // Constructor class
-    public Item(Long itemId, String name, String auctionType, Double itemPrice, Double shippingPrice,
-                Double expeditedShipping) {
-        this.itemId = itemId;
-        this.name = name;
-        this.auctionType = auctionType;
-        this.itemPrice = itemPrice;
-        this.shippingPrice = shippingPrice;
-        this.expeditedShipping = expeditedShipping;
-    }
-
+    @ElementCollection
+    @CollectionTable(name = "item_bidders", joinColumns = @JoinColumn(name = "itemId"))
+    @Column(name = "bidderId")
+    private List<Long> bidderIds = new ArrayList<>();
+    
     // Getters and setters
     public Long getItemId() {
         return itemId;
@@ -50,12 +44,24 @@ public class Item {
         this.name = name;
     }
 
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
     public String getAuctionType() {
         return auctionType;
     }
 
     public void setAuctionType(String auctionType) {
         this.auctionType = auctionType;
+    }
+
+    public String getAuctionStatus() {
+        return auctionStatus;
+    }
+
+    public void setAuctionStatus(String auctionStatus) {
+        this.auctionStatus = auctionStatus;
     }
 
     public Double getItemPrice() {
@@ -74,12 +80,12 @@ public class Item {
         this.shippingPrice = shippingPrice;
     }
 
-    public Double getExpeditedShipping() {
-        return expeditedShipping;
+    public Boolean getIsExpeditedShipping() {
+        return isExpeditedShipping;
     }
 
-    public void setExpeditedShipping(Double expeditedShipping) {
-        this.expeditedShipping = expeditedShipping;
+    public void setIsExpeditedShipping(Boolean isExpeditedShipping) {
+        this.isExpeditedShipping = isExpeditedShipping;
     }
 
     public Long getWinnerId() {
@@ -89,4 +95,19 @@ public class Item {
     public void setWinnerId(Long winnerId) {
         this.winnerId = winnerId;
     }
+    
+    public List<Long> getBidderIds() {
+        return bidderIds;
+    }
+
+    public void setBidderIds(List<Long> bidderIds) {
+        this.bidderIds = bidderIds;
+    }
+
+    public void addBidderId(Long userId) {
+        if (!bidderIds.contains(userId)) {
+            bidderIds.add(userId);
+        }
+    }
+    
 }

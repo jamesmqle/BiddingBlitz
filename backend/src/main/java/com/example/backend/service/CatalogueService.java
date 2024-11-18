@@ -1,6 +1,6 @@
-// CatalogueService.java
 package com.example.backend.service;
 
+import com.example.backend.dto.ItemDetailsDTO;
 import com.example.backend.model.auction.DutchAuction;
 import com.example.backend.model.auction.ForwardAuction;
 import com.example.backend.model.auction.Item;
@@ -10,7 +10,9 @@ import com.example.backend.repository.auction.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CatalogueService {
@@ -26,18 +28,39 @@ public class CatalogueService {
         this.forwardAuctionRepository = forwardAuctionRepository;
     }
 
-    public List<Item> searchItemsAuctioned(String keyword) {
-        // Use the repository method with wildcard matching
-        return itemRepository.findByNameContaining(keyword);
-    }
-    
-    public ForwardAuction getForwardAuctionByItemId(Long itemId) {
-        // Fetch the forward auction details using the itemId
-        return forwardAuctionRepository.findByItemId(itemId);
+    // Search for items based on the provided keyword, return all items if keyword is null
+    public List<ItemDetailsDTO> searchItemsAuctioned(String keyword) {
+        List<Item> items;
+
+        if (keyword == null || keyword.isEmpty()) {
+            // If keyword is null or empty, return all items
+            items = itemRepository.findAll();
+        } else {
+            // If keyword is provided, perform a search by name containing the keyword
+            items = itemRepository.findByNameContaining(keyword);
+        }
+
+        // Use the existing getItemDetails method to map each item to its respective DTO
+        return items.stream()
+                .map(item -> getItemDetails(item.getItemId()))  // Reuse the existing method for mapping
+                .collect(Collectors.toList());
     }
 
-    public DutchAuction getDutchAuctionByItemId(Long itemId) {
-        // Fetch the Dutch auction details using the itemId
-        return dutchAuctionRepository.findByItemId(itemId);
+    // Method to fetch Item and map it to ItemDetailsDTO
+    public ItemDetailsDTO getItemDetails(Long itemId) {
+        // Fetch Item by ID
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        // Check auction type and add relevant auction data to DTO
+        if ("Forward".equalsIgnoreCase(item.getAuctionType())) {
+            ForwardAuction forwardAuction = forwardAuctionRepository.findByItemId(item.getItemId());
+            return new ItemDetailsDTO(item, forwardAuction);
+        } else if ("Dutch".equalsIgnoreCase(item.getAuctionType())) {
+            DutchAuction dutchAuction = dutchAuctionRepository.findByItemId(item.getItemId());
+            return new ItemDetailsDTO(item, dutchAuction);
+        }
+
+        return new ItemDetailsDTO(item);
     }
 }
