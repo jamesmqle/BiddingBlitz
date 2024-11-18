@@ -1,5 +1,6 @@
 package com.example.backend.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,7 +9,7 @@ public class UserAddress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Primary key for UserAddress
+    private Long userId;  // Primary key for UserAddress
 
     private Integer streetNumber;
     private String streetAddress;
@@ -17,15 +18,16 @@ public class UserAddress {
     private String country;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "userId", referencedColumnName = "userId", nullable = false)
     private UserInfo userInfo;  // reference to UserInfo using userId
 
-    public Long getId() {
-        return id;
+    public Long getuserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setuserId(Long id) {
+        this.userId = id;
     }
 
     public Integer getStreetNumber() {

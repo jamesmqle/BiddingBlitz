@@ -1,29 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { getItemById } from "../api/CatalogueApi";
 
 const PaymentPage: React.FC = () => {
-  const [shippingMethod, setShippingMethod] = useState("standard");
+  const { itemId } = useParams<{ itemId: string }>();
+  const [item, setItem] = useState<any | null>(null);
+
+  useEffect(() => {
+    if (itemId) {
+      const fetchItem = async () => {
+        try {
+          const item = await getItemById(Number(itemId));
+          setItem(item);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchItem();
+    }
+  }, [itemId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Payment Successful!");
+
   };
 
   return (
     <div>
       <h2>Payment Page</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Shipping Method:
-          <select
-            value={shippingMethod}
-            onChange={(e) => setShippingMethod(e.target.value)}
-          >
-            <option value="standard">Standard</option>
-            <option value="expedited">Expedited</option>
-          </select>
-        </label>
-        <button type="submit">Complete Payment</button>
-      </form>
+        <button type="submit" onClick={handleSubmit}>Complete Payment</button>
     </div>
   );
 };
