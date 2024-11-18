@@ -29,7 +29,7 @@ const PaymentPage: React.FC = () => {
   return (
     <div>
       <h2>Payment Page</h2>
-        <button type="submit">Complete Payment</button>
+        <button type="submit" onClick={handleSubmit}>Complete Payment</button>
     </div>
   );
 };
