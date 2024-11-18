@@ -7,5 +7,6 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findByNameContaining(String name);
+    List<Item> findByAuctionStatusAndNameContaining(String auctionStatus,String name);
+    List<Item> findByAuctionStatus(String name);
 }
