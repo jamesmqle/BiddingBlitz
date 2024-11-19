@@ -25,7 +25,7 @@ const App: React.FC = () => {
         <Route path="/dutch-bidding/:itemId" element={<DutchBiddingPage />} />
         <Route path="/auction-end/:itemId" element={<AuctionEndedPage />} />
         <Route path="/payment/:itemId" element={<PaymentPage />} />
-        <Route path="/receipt" element={<ReceiptPage />} />
+        <Route path="/receipt/:itemId" element={<ReceiptPage />} />
       </Routes>
     </Router>
   );

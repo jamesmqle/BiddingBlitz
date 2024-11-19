@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { getItemById } from "../api/CatalogueApi";
 import UserDetailsFetcher, { UserDetails } from "../UserDetailsFetcher.tsx";
 
@@ -12,6 +12,7 @@ const PaymentPage: React.FC = () => {
     userAddress: any;
   }>(null);
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
 
 
   const [formData, setFormData] = useState({
@@ -28,7 +29,6 @@ const PaymentPage: React.FC = () => {
         try {
           const item = await getItemById(Number(itemId));
           setItem(item);
-          const shippingCost = 10; // Example shipping cost
           setTotalCost(item.item.itemPrice + item.item.shippingPrice );
         } catch (error) {
           console.error("Failed to fetch item:", error);
@@ -39,27 +39,25 @@ const PaymentPage: React.FC = () => {
     }
   }, [itemId]);
 
-  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate all required fields
+  
     for (const key in formData) {
       if (!formData[key as keyof typeof formData]) {
         alert("Please fill out all fields before submitting.");
         return;
       }
     }
-
-    // Simulate payment submission
+  
     console.log("Payment submitted:", { ...formData, totalCost });
     alert("Payment successful!");
+  
+    navigate(`/receipt/${itemId}`);
   };
 
   return (
