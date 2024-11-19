@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import { getItemById } from "../api/CatalogueApi";
-import { getPaidInfo } from "../api/PaymentApi";
 import UserDetailsFetcher, { UserDetails } from "../UserDetailsFetcher.tsx";
 
 const ReceiptPage: React.FC = () => {
