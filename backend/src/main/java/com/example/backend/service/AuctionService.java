@@ -28,7 +28,7 @@ public class AuctionService {
     private DutchAuctionRepository dutchAuctionRepository;
     @Autowired
     private UserInfoRepository userInfoRepository;
-    
+
 
     // Starts the auction based on the type of auction (Forward or Dutch)
     public void startAuction(Item item) {
@@ -110,7 +110,7 @@ public class AuctionService {
 
     @Transactional
     public List<UserDetailsDTO> endAuction(Long itemId) throws Exception {
-        Item item = itemRepository.findByItemId(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new Exception("Item not found"));
 
         if (!"Active".equalsIgnoreCase(item.getAuctionStatus())) {
@@ -186,7 +186,7 @@ public class AuctionService {
             }
         }
     }
-    
+
     @Transactional
     public List<UserDetailsDTO> getBiddersForItem(Long itemId) throws Exception {
         Item item = itemRepository.findById(itemId)
@@ -206,12 +206,11 @@ public class AuctionService {
                 .toList();
     }
 
-    
+
     private void notifyUser(Long userId, String itemName, String auctionType) {
-        System.out.println("Notified user " + userId + " that the auction for " + itemName 
+        System.out.println("Notified user " + userId + " that the auction for " + itemName
                 + " (" + auctionType + ") has ended.");
     }
-    
-    
-}
 
+
+}
