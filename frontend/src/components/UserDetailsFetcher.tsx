@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { getUserDetails } from "./api/UserApi";
 
-interface UserInfo {
+export interface UserInfo {
   userId: number;
   firstName: string;
   lastName: string;
   email: string;
 }
 
-interface UserAddress {
+export interface UserAddress {
   streetNumber: number;
   streetAddress: string;
   city: string;
@@ -16,7 +16,7 @@ interface UserAddress {
   country: string;
 }
 
-interface UserDetails {
+export interface UserDetails {
   userInfo: UserInfo;
   userAddress: UserAddress;
 }
